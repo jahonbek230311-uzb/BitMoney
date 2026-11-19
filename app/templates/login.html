@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Login - {{ site_name }}{% endblock %}
+{% block content %}
+<section class="login-hero">
+  <div class="login-symbol">ϟ</div>
+  <p class="eyebrow">OFFLINE COMPETITIVE PROGRAMMING</p>
+  <h1>Welcome to <span>BIT MONEY</span></h1>
+  <p class="muted">Sign in to enter the coding arena, solve problems, and join contests on your local network.</p>
+</section>
+<div class="card narrow login-card">
+  <h2>Sign in</h2>
+  {% if error %}<div class="err">{{ error }}</div>{% endif %}
+  <form method="post" action="/login">
+    <input type="hidden" name="next" value="{{ next }}">
+    <label>Username or email<input name="identifier" required autofocus autocomplete="username" placeholder="Enter your username"></label>
+    <label>Password<input name="password" type="password" required autocomplete="current-password" placeholder="Enter your password"></label>
+    <button class="btn login-submit">Login to platform <span aria-hidden="true">→</span></button>
+  </form>
+  <p class="muted center small">{% if allow_reg %}No account? <a href="/register">Register</a>{% else %}Accounts are created by the administrator.{% endif %}</p>
+</div>
+{% endblock %}

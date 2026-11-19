@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Bit Money CP Judge — Code. Compete. Win.{% endblock %}
+{% block content %}
+<section class="landing-hero">
+  <div class="hero-copy">
+    <span class="hero-pill"><i></i> OFFLINE CP JUDGE · LAN READY</span>
+    <h1>Code.<br><span>Compete.</span><br>Win.</h1>
+    <p class="hero-lead">Welcome to <strong>Bit Money</strong> — a modern competitive programming platform built for practice, contests, and classroom competitions.</p>
+    <p class="hero-sub">Solve curated problems, submit solutions in 9 supported languages, and track your progress with a fast, secure judging system.</p>
+    <div class="hero-actions">{% if user %}<a class="btn hero-primary" href="/problems">Explore problems <span>→</span></a><a class="btn alt" href="/contests">Browse contests</a>{% else %}<a class="btn hero-primary" href="/login">Get started <span>→</span></a><a class="btn alt" href="#features">Explore features</a>{% endif %}</div>
+    <div class="hero-trust"><span>✓ Manual test validation</span><span>✓ LAN / offline classroom</span><span>✓ Live contest standings</span></div>
+  </div>
+  <div class="hero-art" aria-label="Bit Money coding illustration">
+    <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
+    <div class="code-window"><div class="window-top"><span></span><span></span><span></span><b>bitmoney.cpp</b></div><pre><span class="code-purple">#include</span> <span class="code-green">&lt;iostream&gt;</span>
+<span class="code-purple">using namespace</span> std;
+
+<span class="code-blue">int</span> main() {
+  <span class="code-blue">int</span> a, b;
+  cin &gt;&gt; a &gt;&gt; b;
+  cout &lt;&lt; a + b;
+  <span class="code-green">return</span> 0;
+}</pre><div class="code-status"><span>●</span> Ready to submit <b> C++17</b></div></div>
+    <div class="floating-chip chip-top"><span>ϟ</span> Fast judging</div><div class="floating-chip chip-bottom"><span>✓</span> Accepted</div>
+    <div class="hero-logo-big"><img src="/static/bit-money.svg" alt="Bit Money lightning logo"><strong>BIT MONEY</strong><small>CP JUDGE</small></div>
+  </div>
+  <div class="hero-count"><div><b>{{ problem_count }}</b><span>Published problems</span></div><div><b>24/7</b><span>Practice-ready</span></div><div><b>2</b><span>Supported languages</span></div></div>
+</section>
+<section class="feature-section" id="features"><div class="section-heading"><span class="eyebrow">BUILT FOR COMPETITORS</span><h2>Everything you need to <span>level up.</span></h2><p>Powerful tools for students, organizers, and admins — wrapped in a clean, modern experience.</p></div>
+  <div class="feature-grid">
+    <article class="feature-card"><div class="feature-icon">⌘</div><h3>Practice problems</h3><p>Browse programming tasks, read constraints, write solutions, and learn through repeated practice.</p><a href="/problems">View problems ↗</a></article>
+    <article class="feature-card"><div class="feature-icon">♜</div><h3>Live contests</h3><p>Organize timed rounds, manage participants, and follow standings as submissions are judged.</p><a href="/contests">Explore contests ↗</a></article>
+    <article class="feature-card"><div class="feature-icon">⌁</div><h3>Trusted judging</h3><p>Python, C/C++, Java, JavaScript, Go, Rust, Ruby, and PHP submissions run in an isolated sandbox against validated tests.</p><a href="/login">Start coding ↗</a></article>
+    <article class="feature-card"><div class="feature-icon">◈</div><h3>Classroom ready</h3><p>Run on your local network so students can connect through the same Wi-Fi or hotspot.</p><a href="/login">Enter platform ↗</a></article>
+  </div>
+</section>
+<section class="landing-cta"><div class="cta-symbol"><img src="/static/bit-money.svg" alt=""></div><div><span class="eyebrow">YOUR NEXT SOLUTION STARTS HERE</span><h2>Think sharp. Code smarter.</h2><p>Join the Bit Money coding arena and make every submission count.</p></div><a class="btn hero-primary" href="{% if user %}/problems{% else %}/login{% endif %}">{% if user %}Go to problems{% else %}Enter the arena{% endif %} →</a></section>
+{% endblock %}

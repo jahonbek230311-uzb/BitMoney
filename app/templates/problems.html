@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Problems - {{ site_name }}{% endblock %}
+{% block content %}
+<h2>Problems</h2>
+<form method="get" class="filters">
+  <input name="q" placeholder="Search title" value="{{ f.get('q','') }}">
+  <select name="difficulty"><option value="">Any difficulty</option>
+    {% for d in ['easy','medium','hard'] %}<option value="{{ d }}" {{ 'selected' if f.get('difficulty')==d }}>{{ d|capitalize }}</option>{% endfor %}</select>
+  <select name="category"><option value="">Any category</option>
+    {% for c in cats %}<option value="{{ c }}" {{ 'selected' if f.get('category')==c }}>{{ c }}</option>{% endfor %}</select>
+  <input name="tag" placeholder="Tag" value="{{ f.get('tag','') }}">
+  <input name="rating_min" type="number" min="0" placeholder="Rating from" value="{{ f.get('rating_min','') }}">
+  <input name="rating_max" type="number" min="0" placeholder="Rating to" value="{{ f.get('rating_max','') }}">
+  <select name="sort"><option value="">Sort: newest id</option><option value="rating" {{ 'selected' if f.get('sort')=='rating' }}>Sort: by rating</option></select>
+  <select name="status"><option value="">Any status</option>
+    {% for s in ['solved','attempted','unsolved'] %}<option value="{{ s }}" {{ 'selected' if f.get('status')==s }}>{{ s|capitalize }}</option>{% endfor %}</select>
+  <button class="btn">Filter</button>
+</form>
+<div class="scroll"><table class="tbl">
+<tr><th>#</th><th>Title</th><th>Rating</th><th>Category</th><th>Tags</th><th>Status</th></tr>
+{% for p, st in rows %}
+<tr><td>{{ p.id }}</td><td><a href="/problems/{{ p.id }}">{{ p.title }}</a></td>
+<td><span class="d d-{{ p.difficulty }}">{{ p.rating }}</span></td><td>{{ p.category }}</td><td>{{ p.tags }}</td>
+<td><span class="st st-{{ st }}">{{ st }}</span></td></tr>
+{% else %}<tr><td colspan="6" class="muted">No problems found.</td></tr>{% endfor %}
+</table></div>
+{% endblock %}

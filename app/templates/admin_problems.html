@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Problems <a class="btn" href="/admin/problems/new">New problem</a></h2>
+<div class="scroll"><table class="tbl">
+<tr><th>#</th><th>Title</th><th>Rating</th><th>Valid tests</th><th>Status</th><th></th></tr>
+{% for p, n in rows %}
+<tr><td>{{ p.id }}</td><td>{{ p.title }}</td><td>{{ p.rating }}</td>
+<td class="{{ 'ok' if n >= min_tests else 'bad' }}">{{ n }} / {{ min_tests }}</td>
+<td>{{ 'Published' if p.published else 'Draft' }}</td>
+<td><a href="/admin/problems/{{ p.id }}/edit">Edit</a> &middot; <a href="/problems/{{ p.id }}">Preview</a></td></tr>
+{% else %}<tr><td colspan="6" class="muted">No problems yet.</td></tr>{% endfor %}
+</table></div>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Edit {{ p.title }}{% endblock %}
+{% block content %}
+<h2>{{ p.title }} <span class="muted">#{{ p.id }}</span></h2>
+<div class="card">
+  <p>Status: <b>{{ 'Published' if p.published else 'Draft' }}</b> &middot; Valid tests:
+  <b class="{{ 'ok' if valid >= min_tests else 'bad' }}" id="valid">{{ valid }}</b> / {{ min_tests }} required to publish</p>
+  <form method="post" action="/admin/problems/{{ p.id }}/{{ 'unpublish' if p.published else 'publish' }}" class="inline"><button class="btn">{{ 'Unpublish' if p.published else 'Publish' }}</button></form>
+  <a class="btn alt" href="/problems/{{ p.id }}">Preview</a>
+  <form method="post" action="/admin/problems/{{ p.id }}/duplicate" class="inline"><button class="btn alt">Duplicate</button></form>
+  <form method="post" action="/admin/problems/{{ p.id }}/delete" class="inline" onsubmit="return confirm('Delete this problem and all its tests and submissions?')"><button class="btn danger">Delete</button></form>
+</div>
+
+<div class="card status-card"><h3>Publish readiness</h3><p class="muted">Publish ishlashi uchun reference solution saqlangan, 20 ta test valid va kamida bittasi sample bo‘lishi kerak.</p>
+  {% if issues %}<p class="bad">Not ready: {{ issues|join('; ') }}.</p>{% else %}<p class="ok">Ready: reference, sample and {{ valid }} valid tests are in place.</p>{% endif %}
+  {% for w in warns %}<p class="muted">Note: {{ w }}.</p>{% endfor %}
+  {% if contest_id %}<form method="post" action="/admin/contests/{{ contest_id }}/problems/add" class="inline"><input type="hidden" name="problem_id" value="{{ p.id }}"><button class="btn" {{ 'disabled' if issues }}>Add to contest #{{ contest_id }}</button></form>
+  <a class="btn alt" href="/admin/contests/{{ contest_id }}">Back to contest</a>{% endif %}
+</div>
+
+<div class="card"><h3>Problem details</h3>
+<form method="post" action="/admin/problems/{{ p.id }}">{% include "_problem_fields.html" %}<button class="btn">Save</button></form></div>
+
+<details open><summary class="btn alt">Reference solution and manual test builder</summary>
+<div class="card" id="tools" data-pid="{{ p.id }}">
+  <h3>1. Reference solution</h3>
+  <p class="muted">Trusted solution used to compute and verify every expected output. It runs in the sandbox.</p>
+  <select id="ref-lang">{% for code, name in [('python3','Python 3'),('cpp17','C++17'),('c','C17'),('java17','Java 17'),('javascript','JavaScript (Node.js)'),('go','Go'),('rust','Rust'),('ruby','Ruby'),('php','PHP')] %}<option value="{{ code }}" {{ 'selected' if ref and ref.language==code }}>{{ name }}</option>{% endfor %}</select>
+  <textarea id="ref-src" rows="8" class="code" placeholder="Reference solution source">{{ ref.source if ref else '' }}</textarea>
+  <button class="btn" id="ref-save">Save reference</button>
+  <button class="btn alt" id="ref-example" type="button">Insert A+B example</button>
+
+  <h3>2. Manual testlar</h3>
+  <p class="muted">Testlar sonini o‘zingiz kiriting va “Test maydonlarini yaratish” tugmasini bosing. Kamida 20 ta valid test kerak. Birinchi test sample sifatida belgilanadi.</p>
+  <div class="count-control"><label>Nechta test kiritasiz?<input id="manual-count" type="number" min="20" max="100" value="" placeholder="Masalan: 20"></label><button class="btn alt" id="build-tests" type="button">Test maydonlarini yaratish</button></div>
+  <div id="manual-tests" class="manual-tests"></div>
+  <button class="btn" id="t-add" type="button">Barcha testlarni saqlash</button>
+
+  <button class="btn alt" id="reval">Re-validate all tests</button>
+  <pre id="report" class="log" hidden></pre>
+</div>
+</details>
+
+<div class="card"><h3>Test cases ({{ tests|length }})</h3>
+<div class="scroll"><table class="tbl small">
+<tr><th>#</th><th>Kind</th><th>Source</th><th>Sample</th><th>Valid</th><th>Input size</th><th></th></tr>
+{% for t in tests %}
+<tr><td>{{ t.ordinal }}</td><td>{{ t.kind }}</td><td>{{ t.source }}</td><td>{{ 'yes' if t.is_sample }}</td>
+<td class="{{ 'ok' if t.validated else 'bad' }}">{{ 'valid' if t.validated else 'INVALID' }}</td><td>{{ t.input_data|length }} B</td>
+<td><button class="link view-test" data-id="{{ t.id }}">View</button> <button class="link del-test" data-id="{{ t.id }}">Delete</button></td></tr>
+{% else %}<tr><td colspan="7" class="muted">No tests yet.</td></tr>{% endfor %}
+</table></div>
+<pre id="detail" class="log" hidden></pre></div>
+<script id="examples" type="application/json">{{ {'ref': sample_ref, 'gen': sample_gen}|tojson }}</script>
+{% endblock %}
+{% block scripts %}<script src="/static/admin_problem.js?v={{ asset_v }}"></script>{% endblock %}

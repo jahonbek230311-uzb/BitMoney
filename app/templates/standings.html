@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Standings - {{ c.title }}{% endblock %}
+{% block content %}
+<h2>{{ c.title }}: standings <span class="cs cs-{{ st }}">{{ st }}</span></h2>
+<p><a href="/contests/{{ c.id }}">Back to contest</a> &middot; <span class="muted" id="upd">updates every second</span>
+{% if is_admin %} &middot; <a href="/admin/contests/{{ c.id }}/export.csv">Export CSV</a>{% endif %}</p>
+<p class="muted">Penalty = number of failed attempts on solved problems (time does not matter). Tried = problems attempted, Solved = problems accepted. Compile errors (CE) and judge errors (SE) never count as failed attempts.</p>
+<div id="info"></div>
+<div id="board" data-cid="{{ c.id }}" data-me="{{ user.username }}"><div class="card muted">Loading...</div></div>
+{% endblock %}
+{% block scripts %}<script src="/static/standings.js?v={{ asset_v }}"></script>{% endblock %}

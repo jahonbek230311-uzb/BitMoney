@@ -1,0 +1,10 @@
+{% from "_macros.html" import avatar %}
+<div class="scroll"><table class="tbl standings">
+<tr><th>#</th><th>Participant</th><th>Solved</th><th>Rating points</th><th>Percent</th></tr>
+{% for r in rows %}
+<tr{% if r.name == me %} class="me"{% endif %}><td class="c">{{ r.rank }}</td>
+<td>{{ avatar(r.name, r.avatar) }}<a href="/users/{{ r.name }}">{{ r.name }}</a></td>
+<td class="c">{{ r.solved }} / {{ total_count }}</td><td class="c">{{ r.points }}</td>
+<td><span class="pbar"><i style="width:{{ r.percent }}%"></i></span>{{ '%.1f'|format(r.percent) }}%</td></tr>
+{% else %}<tr><td colspan="5" class="muted">No students yet.</td></tr>{% endfor %}
+</table></div>

@@ -1,0 +1,3 @@
+{% macro avatar(name, file, size='sm') -%}
+{%- if file -%}<img class="ava ava-{{ size }}" src="/avatar/{{ file }}" alt="">{%- else -%}<span class="ava ava-{{ size }}">{{ name[:1]|upper }}</span>{%- endif -%}
+{%- endmacro %}

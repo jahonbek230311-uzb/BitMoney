@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Contests <a class="btn" href="/admin/contests/new">New contest</a></h2>
+<div class="scroll"><table class="tbl">
+<tr><th>#</th><th>Title</th><th>Type</th><th>Starts</th><th>Status</th><th>Problems</th><th>Participants</th><th></th></tr>
+{% for c, st, n, k in rows %}
+<tr><td>{{ c.id }}</td><td>{{ c.title }}</td><td>{{ c.kind }}</td><td data-utc="{{ c.start_at|utc_iso }}"></td>
+<td><span class="cs cs-{{ st }}">{{ st }}</span></td><td>{{ k }}</td><td>{{ n }}</td>
+<td><a href="/admin/contests/{{ c.id }}">Manage</a> &middot; <a href="/contests/{{ c.id }}/standings">Standings</a></td></tr>
+{% else %}<tr><td colspan="8" class="muted">No contests yet.</td></tr>{% endfor %}
+</table></div>
+{% endblock %}

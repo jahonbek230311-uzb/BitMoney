@@ -1,0 +1,15 @@
+<label>Title (optional; generated from the statement if blank)<input name="title" maxlength="200" value="{{ p.title if p else '' }}"></label>
+<label>Statement<textarea name="statement" rows="6" required>{{ p.statement if p else '' }}</textarea></label>
+<label>Input format<textarea name="input_format" rows="2">{{ p.input_format if p else '' }}</textarea></label>
+<label>Output format<textarea name="output_format" rows="2">{{ p.output_format if p else '' }}</textarea></label>
+<label>Constraints<textarea name="constraints" rows="2">{{ p.constraints if p else '' }}</textarea></label>
+<div class="row">
+<label>Rating (problem points)<select name="rating">{% for r in rating_choices %}<option value="{{ r }}" {{ 'selected' if (p and p.rating==r) or (not p and r==800) }}>{{ r }}</option>{% endfor %}</select></label>
+<label>Category<input name="category" maxlength="64" value="{{ p.category if p else '' }}"></label>
+<label>Tags (comma separated)<input name="tags" maxlength="255" value="{{ p.tags if p else '' }}"></label>
+</div>
+<div class="row">
+<label>Time limit (ms)<input name="time_limit_ms" type="number" min="100" max="20000" value="{{ p.time_limit_ms if p else 1000 }}"></label>
+<label>Memory limit (MB)<input name="memory_limit_mb" type="number" min="16" max="1024" value="{{ p.memory_limit_mb if p else 256 }}"></label>
+<label>Answer comparison<select name="checker_mode">{% for m in ['tokens','lines','exact','float'] %}<option value="{{ m }}" {{ 'selected' if p and p.checker_mode==m }}>{{ m }}</option>{% endfor %}</select></label>
+</div>

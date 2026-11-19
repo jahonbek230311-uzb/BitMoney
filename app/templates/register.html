@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Register - {{ site_name }}{% endblock %}
+{% block content %}
+<div class="card narrow">
+  <h2>Register</h2>
+  {% if closed %}<p>Registration is closed. Ask the administrator for a username and password.</p><p><a href="/login">Login</a></p>{% else %}
+  {% if error %}<div class="err">{{ error }}</div>{% endif %}
+  <form method="post" action="/register">
+    <label>Username<input name="username" required pattern="[A-Za-z0-9_]{3,32}" title="3-32 letters, digits or _" autocomplete="username"></label>
+    <label>Email<input name="email" type="email" required autocomplete="email"></label>
+    <label>Password (min 8)<input name="password" type="password" minlength="8" required autocomplete="new-password"></label>
+    <button class="btn">Create account</button>
+  </form>
+  {% endif %}
+</div>
+{% endblock %}

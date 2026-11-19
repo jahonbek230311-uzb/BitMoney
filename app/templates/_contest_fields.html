@@ -1,0 +1,19 @@
+<label>Title<input name="title" required maxlength="200" value="{{ c.title if c else '' }}"></label>
+<label>Description<textarea name="description" rows="3">{{ c.description if c else '' }}</textarea></label>
+<label>Rules<textarea name="rules" rows="3">{{ c.rules if c else '' }}</textarea></label>
+<div class="row">
+<label>Type<select name="kind">{% for k in ['public','private','practice'] %}<option value="{{ k }}" {{ 'selected' if c and c.kind==k }}>{{ k }}</option>{% endfor %}</select></label>
+<label>Password (private contests{{ ', empty = keep' if c else '' }})<input name="password" type="text" autocomplete="off"></label>
+</div>
+<div class="row">
+<label>Start (your local time)<input type="datetime-local" name="start_local" required data-iso-target="start_iso" {% if c %}data-utc="{{ c.start_at|utc_iso }}"{% endif %}></label>
+<label>Duration (minutes)<input name="duration_minutes" type="number" min="1" max="20160" required value="{{ c|duration_min if c else 120 }}"></label>
+<label>Registration deadline (optional)<input type="datetime-local" name="registration_deadline_local" data-iso-target="registration_deadline_iso" {% if c and c.registration_deadline %}data-utc="{{ c.registration_deadline|utc_iso }}"{% endif %}></label>
+<label>Max participants (optional)<input name="max_participants" type="number" min="1" value="{{ c.max_participants if c and c.max_participants else '' }}"></label>
+</div>
+<input type="hidden" name="start_iso"><input type="hidden" name="registration_deadline_iso">
+<div class="row">
+<label>Scoring<select name="scoring"><option value="icpc" {{ 'selected' if c and c.scoring=='icpc' }}>ICPC (solved, then fewer failed attempts)</option><option value="points" {{ 'selected' if c and c.scoring=='points' }}>Points per problem</option></select></label>
+<input type="hidden" name="penalty_minutes" value="{{ c.penalty_minutes if c else 20 }}">
+<label class="chk"><input type="checkbox" name="partial_scoring" {{ 'checked' if c and c.partial_scoring }}> Partial points (points scoring only)</label>
+</div>

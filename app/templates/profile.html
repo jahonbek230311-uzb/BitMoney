@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% from "_macros.html" import avatar %}
+{% block title %}{{ target.username }} - {{ site_name }}{% endblock %}
+{% block content %}
+<div class="card prof">
+  {{ avatar(target.username, target.avatar, 'lg') }}
+  <div>
+    <h2>{{ target.username }}</h2>
+    {% if own %}<p class="muted">{{ target.email }}</p>{% endif %}
+    <p class="pre-wrap">{{ target.description if target.description else 'No description yet.' }}</p>
+    <p><b>{{ points }}</b> rating points &middot; <a href="/standings">Overall standings</a></p>
+  </div>
+</div>
+<div class="cards">
+  <div class="card stat"><b>{{ solved }}</b><span>Problems solved</span></div>
+  <div class="card stat"><b>{{ tried }}</b><span>Problems attempted</span></div>
+  <div class="card stat"><b>{{ total }}</b><span>Submissions</span></div>
+  <div class="card stat"><b>{{ (100 * ac / total)|round(0)|int if total else 0 }}%</b><span>Accepted rate</span></div>
+</div>
+<h3>Solved by difficulty</h3>
+<p>Easy: {{ by_diff.get('easy',0) }} &middot; Medium: {{ by_diff.get('medium',0) }} &middot; Hard: {{ by_diff.get('hard',0) }}</p>
+
+{% if own %}
+<div class="card"><h3>Edit profile</h3>
+<p class="muted">{% if is_admin %}You are an administrator: your changes apply immediately.{% else %}Every change is sent to an administrator and takes effect when it is accepted.{% endif %}</p>
+<form method="post" action="/profile/request" enctype="multipart/form-data">
+  <label>Picture (PNG, JPEG, WebP or GIF, max 1 MB){% if pending.get('avatar') %} <span class="warn">waiting for approval</span>{% endif %}
+    <input type="file" name="avatar" accept="image/png,image/jpeg,image/webp,image/gif"></label>
+  {% if pending.get('avatar') %}<p class="muted">Pending picture:</p><img class="ava ava-lg" src="/avatar/{{ pending['avatar'].value }}" alt="">{% endif %}
+  <label>Description (max 500 characters){% if pending.get('description') %} <span class="warn">waiting for approval</span>{% endif %}
+    <textarea name="description" rows="3" maxlength="500">{{ pending['description'].value if pending.get('description') else target.description }}</textarea></label>
+  <label>Email{% if pending.get('email') %} <span class="warn">waiting for approval: {{ pending['email'].value }}</span>{% endif %}
+    <input type="email" name="email" maxlength="255" value="{{ pending['email'].value if pending.get('email') else target.email }}"></label>
+  <div class="row">
+    <label>Current password (only to change it)<input type="password" name="current_password" autocomplete="current-password"></label>
+    <label>New password (min 8){% if pending.get('password') %} <span class="warn">waiting for approval</span>{% endif %}<input type="password" name="new_password" minlength="8" autocomplete="new-password"></label>
+  </div>
+  <button class="btn">{{ 'Save' if is_admin else 'Send to administrator' }}</button>
+</form></div>
+{% if reqs %}
+<div class="card"><h3>My requests</h3>
+<div class="scroll"><table class="tbl small"><tr><th>When</th><th>Change</th><th>Status</th><th>Note</th></tr>
+{% for r in reqs %}<tr><td data-utc="{{ r.created_at|utc_iso }}"></td><td>{{ r.kind }}</td>
+<td class="{{ 'ok' if r.status=='accepted' else 'bad' if r.status=='rejected' else 'muted' }}">{{ r.status }}</td><td>{{ r.note }}</td></tr>{% endfor %}
+</table></div></div>
+{% endif %}
+{% endif %}
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}{{ p.title }} - {{ site_name }}{% endblock %}
+{% block content %}
+{% if contest %}<div class="card"><b>{{ contest.title }}</b> &middot; <a href="/contests/{{ contest.id }}">Contest</a> &middot; <a href="/contests/{{ contest.id }}/standings">Standings</a> &middot; <a href="/contests/{{ contest.id }}/submissions">My submissions</a>{% if target %} &middot; Time left: <b data-countdown="{{ target }}" data-now="{{ server_now }}">--:--:--</b>{% endif %}</div>{% endif %}
+{% if not p.published and not contest %}<div class="err">Preview: this problem is not published.</div>{% endif %}
+<div class="split">
+<section class="card stmt">
+  <h2>{{ p.title }}</h2>
+  <p class="muted">Time limit: {{ p.time_limit_ms }} ms &middot; Memory limit: {{ p.memory_limit_mb }} MB &middot; <span class="d d-{{ p.difficulty }}">Rating {{ p.rating }}</span></p>
+  <div class="pre-wrap">{{ p.statement }}</div>
+  {% if p.input_format %}<h3>Input</h3><div class="pre-wrap">{{ p.input_format }}</div>{% endif %}
+  {% if p.output_format %}<h3>Output</h3><div class="pre-wrap">{{ p.output_format }}</div>{% endif %}
+  {% if p.constraints %}<h3>Constraints</h3><div class="pre-wrap">{{ p.constraints }}</div>{% endif %}
+  {% for s in samples %}
+    <h3>Example {{ loop.index }}</h3>
+    <div class="ex"><div><b>Input</b><pre>{{ s.input_data }}</pre></div><div><b>Output</b><pre>{{ s.expected_output }}</pre></div></div>
+  {% endfor %}
+</section>
+<section class="card ed">
+  <div class="bar">
+    <select id="lang"><option value="python3">Python 3</option><option value="cpp17">C++17</option><option value="c">C17</option><option value="java17">Java 17</option><option value="javascript">JavaScript (Node.js)</option><option value="go">Go</option><option value="rust">Rust</option><option value="ruby">Ruby</option><option value="php">PHP</option></select>
+    <button class="btn alt" id="run">Run samples</button>
+    <button class="btn" id="submit">Submit</button>
+  </div>
+  <textarea id="editor" class="code" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" data-pid="{{ p.id }}" data-cid="{{ contest.id if contest else '' }}" aria-label="Solution code"></textarea>
+  <div id="out" class="out"></div>
+</section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="/static/problem.js?v={{ asset_v }}"></script>
+{% endblock %}

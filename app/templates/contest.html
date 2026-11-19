@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ c.title }}{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>{{ c.title }} <span class="cs cs-{{ st }}">{{ st }}</span></h2>
+  <p class="muted">{{ c.kind }} &middot; {{ 'ICPC (penalty = failed attempts)' if c.scoring=='icpc' else 'Points' }} &middot; {{ n }} participant(s)<br>
+  Start: <span data-utc="{{ c.start_at|utc_iso }}"></span> &middot; End: <span data-utc="{{ c.end_at|utc_iso }}"></span></p>
+  {% if target %}<p class="big">{{ 'Starts in' if st == 'upcoming' else 'Time left' }}: <b data-countdown="{{ target }}" data-now="{{ server_now }}">--:--:--</b> <small class="muted">(server time)</small></p>{% endif %}
+  {% if st == 'paused' %}<div class="flash">The contest is paused by the administrator.</div>{% endif %}
+  {% if c.description %}<div class="pre-wrap">{{ c.description }}</div>{% endif %}
+  {% if c.rules %}<h3>Rules</h3><div class="pre-wrap">{{ c.rules }}</div>{% endif %}
+  <p><a class="btn alt" href="/contests/{{ c.id }}/standings">Standings</a>
+     <a class="btn alt" href="/contests/{{ c.id }}/submissions">My submissions</a></p>
+  {% if not part and (st != 'finished' or c.kind == 'practice') %}
+  <form method="post" action="/contests/{{ c.id }}/join" class="inline">
+    {% if c.kind == 'private' %}<input type="password" name="password" placeholder="Contest password" required style="max-width:240px">{% endif %}
+    <button class="btn">Register</button></form>
+  {% elif part %}<p class="ok">You are registered.</p>{% endif %}
+</div>
+{% if probs %}
+<h3>Problems</h3>
+<div class="scroll"><table class="tbl">
+<tr><th></th><th>Title</th><th>Rating</th>{% if c.scoring == 'points' %}<th>Points</th>{% endif %}<th>Solved</th></tr>
+{% for cp, p, l in probs %}
+<tr><td><b>{{ l }}</b></td><td><a href="/contests/{{ c.id }}/problems/{{ p.id }}">{{ p.title }}</a></td><td>{{ p.rating }}</td>
+{% if c.scoring == 'points' %}<td>{{ cp.points }}</td>{% endif %}<td>{{ '✓' if p.id in solved }}</td></tr>
+{% endfor %}</table></div>
+{% elif st == 'upcoming' %}<p class="muted">Problems appear here when the contest starts.</p>
+{% elif not part and st == 'running' %}<p class="muted">Register to see the problems.</p>{% endif %}
+{% endblock %}

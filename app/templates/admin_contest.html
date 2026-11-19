@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Manage {{ c.title }}{% endblock %}
+{% block content %}
+<h2>{{ c.title }} <span class="cs cs-{{ st }}">{{ st }}</span></h2>
+<div class="card">
+  <div class="kv">
+    <div><span>Start</span> <b data-utc="{{ c.start_at|utc_iso }}"></b></div>
+    <div><span>End</span> <b data-utc="{{ c.end_at|utc_iso }}"></b></div>
+    {% if st in ('running','upcoming') %}<div><span>{{ 'Starts in' if st=='upcoming' else 'Time left' }}</span> <b data-countdown="{{ (c.start_at if st=='upcoming' else c.end_at)|utc_iso }}" data-now="{{ server_now }}">--:--:--</b></div>{% endif %}
+    <div><span>Type</span> <b>{{ c.kind }}</b></div>
+    <div><span>Scoring</span> <b>{{ 'ICPC' if c.scoring=='icpc' else 'Points' }}</b></div>
+    <div><span>Participants</span> <b>{{ parts|length }}</b></div>
+    <div><span>Scoreboard</span> <b>{{ 'hidden' if c.scoreboard_hidden else 'visible' }}{{ ', frozen' if c.frozen_at }}</b></div>
+  </div>
+  {% macro act(name, label, cls='alt', ask='') %}<form method="post" action="/admin/contests/{{ c.id }}/{{ name }}" class="inline" {% if ask %}onsubmit="return confirm('{{ ask }}')"{% endif %}><button class="btn {{ cls }}">{{ label }}</button></form>{% endmacro %}
+  <div class="ctl">
+  {% if st == 'upcoming' %}{{ act('start','Start now','') }}{% endif %}
+  {% if st == 'running' %}{{ act('pause','Pause') }}{% endif %}
+  {% if st == 'paused' %}{{ act('resume','Resume','') }}{% endif %}
+  {% if st != 'finished' %}{{ act('finish','Finish now','danger','Finish this contest now?') }}{% endif %}
+  {% if c.scoreboard_hidden %}{{ act('show','Show scoreboard') }}{% else %}{{ act('hide','Hide scoreboard') }}{% endif %}
+  {% if c.frozen_at %}{{ act('unfreeze','Unfreeze scoreboard') }}{% else %}{{ act('freeze','Freeze scoreboard') }}{% endif %}
+  <a class="btn alt" href="/contests/{{ c.id }}/standings">Live standings</a>
+  <a class="btn alt" href="/admin/contests/{{ c.id }}/export.csv">Export CSV</a>
+  <a class="btn alt" href="/admin/submissions?contest={{ c.id }}">Submissions</a>
+  {{ act('delete','Delete contest','danger','Delete this contest and its participant list? Submissions stay in history.') }}
+  </div>
+  <p class="muted">Standings update by themselves while the contest runs. All timing uses the server clock.{% if counts %} Submissions: {% for v, n in counts.items() %}{{ v }}={{ n }} {% endfor %}{% endif %}</p>
+</div>
+
+<div class="grid2">
+<div class="card"><h3>Problems</h3>
+<div class="scroll"><table class="tbl">
+<tr><th></th><th>Title</th><th>Rating</th><th>Points</th><th>Order</th><th></th></tr>
+{% for cp, p, l in probs %}
+<tr><td><b>{{ l }}</b></td><td>{{ p.title }}</td><td>{{ p.rating }}</td>
+<td><form method="post" action="/admin/contests/{{ c.id }}/problems/{{ cp.id }}/points" class="inline"><input name="points" type="number" min="1" max="100000" value="{{ cp.points }}" style="width:90px"><button class="link">Set</button></form></td>
+<td><form method="post" action="/admin/contests/{{ c.id }}/problems/{{ cp.id }}/move" class="inline"><button class="link" name="direction" value="up">&uarr;</button><button class="link" name="direction" value="down">&darr;</button></form></td>
+<td><form method="post" action="/admin/contests/{{ c.id }}/problems/{{ cp.id }}/remove" class="inline" onsubmit="return confirm('Remove from contest?')"><button class="link">Remove</button></form></td></tr>
+{% else %}<tr><td colspan="6" class="muted">No problems yet.</td></tr>{% endfor %}
+</table></div>
+<form method="post" action="/admin/contests/{{ c.id }}/problems/add" class="row">
+  <label>Add problem (requires reference solution, sample and {{ min_tests }}+ manually entered valid tests)<select name="problem_id" required>
+  {% for p, issues in candidates %}<option value="{{ p.id }}" {{ 'disabled' if issues }}>#{{ p.id }} {{ p.title }} (rating {{ p.rating }}){% if issues %} - not ready: {{ issues|join('; ') }}{% endif %}</option>{% endfor %}</select></label>
+  <label>Points (empty = problem rating)<input name="points" type="number" min="1" placeholder="rating"></label>
+  <div><button class="btn">Add</button></div></form>
+<p><a class="btn alt" href="/admin/problems/new?contest={{ c.id }}">Create a new problem for this contest</a></p>
+<p class="muted">Problems of an unfinished contest are hidden from the general problem list.</p></div>
+
+<div class="card"><h3>Participants ({{ parts|length }})</h3>
+<form method="post" action="/admin/contests/{{ c.id }}/participants/add">
+  <input type="search" id="pfilter" placeholder="Search users...">
+  <div class="toolbar"><button class="btn alt" type="button" id="psel">Select shown</button><button class="btn alt" type="button" id="pclr">Clear shown</button><span class="muted" id="pcount"></span></div>
+  <div class="userlist" id="ulist">{% for u in others %}<label class="chk"><input type="checkbox" name="user_ids" value="{{ u.id }}"> {{ u.username }}</label>{% else %}<span class="muted">Everyone is already registered.</span>{% endfor %}</div>
+  <label>Or paste usernames (one per line, or separated by commas)<textarea name="usernames" rows="2" placeholder="team001, team002"></textarea></label>
+  <div class="toolbar"><button class="btn">Register</button><button class="btn alt" name="all_students" value="1">Register ALL students</button></div>
+</form>
+<div class="scroll"><table class="tbl small"><tr><th>User</th><th></th></tr>
+{% for u in parts %}<tr><td>{{ u.username }}</td><td><form method="post" action="/admin/contests/{{ c.id }}/participants/{{ u.id }}/remove" class="inline"><button class="link">Remove</button></form></td></tr>
+{% else %}<tr><td colspan="2" class="muted">Nobody registered yet.</td></tr>{% endfor %}</table></div></div>
+</div>
+
+<div class="card"><h3>Settings</h3>
+<form method="post" action="/admin/contests/{{ c.id }}/update" class="tz-form">{% include "_contest_fields.html" %}<button class="btn">Save settings</button></form></div>
+{% endblock %}

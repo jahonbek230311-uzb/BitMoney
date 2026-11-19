@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Standings - {{ site_name }}{% endblock %}
+{% block content %}
+<h2>Overall standings</h2>
+<p class="muted">Rating points = sum of the ratings of the problems a user has solved. Percent = share of all
+{{ total_points }} points available now ({{ total_count }} problems). Updates by itself every 10 seconds. <span id="upd"></span></p>
+<div id="gboard" data-url="/standings?partial=1">{% include "_global_board.html" %}</div>
+{% endblock %}
+{% block scripts %}<script src="/static/global_standings.js?v={{ asset_v }}"></script>{% endblock %}

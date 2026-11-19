@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% from "_macros.html" import avatar %}
+{% block title %}Profile requests{% endblock %}
+{% block content %}
+<h2>Profile requests</h2>
+<div class="card"><h3>Waiting ({{ pending|length }})</h3>
+<div class="scroll"><table class="tbl">
+<tr><th>User</th><th>Change</th><th>New value</th><th>When</th><th></th></tr>
+{% for r, uname in pending %}
+<tr><td>{{ uname }}</td><td>{{ r.kind }}</td>
+<td class="pre-wrap">{% if r.kind == 'avatar' %}{{ avatar(uname, r.value, 'lg') }}{% elif r.kind == 'password' %}<span class="muted">(new password, hidden)</span>{% else %}{{ r.value }}{% endif %}</td>
+<td data-utc="{{ r.created_at|utc_iso }}"></td>
+<td><form method="post" action="/admin/profile-requests/{{ r.id }}/accept" class="inline"><button class="btn">Accept</button></form>
+<form method="post" action="/admin/profile-requests/{{ r.id }}/reject" class="inline"><input name="note" placeholder="reason (optional)" maxlength="200" style="width:150px"><button class="btn danger">Reject</button></form></td></tr>
+{% else %}<tr><td colspan="5" class="muted">Nothing is waiting.</td></tr>{% endfor %}
+</table></div></div>
+<div class="card"><h3>Recently handled</h3>
+<div class="scroll"><table class="tbl small"><tr><th>User</th><th>Change</th><th>Result</th><th>Note</th><th>When</th></tr>
+{% for r, uname in done %}<tr><td>{{ uname }}</td><td>{{ r.kind }}</td>
+<td class="{{ 'ok' if r.status=='accepted' else 'bad' }}">{{ r.status }}</td><td>{{ r.note }}</td><td data-utc="{{ r.decided_at|utc_iso }}"></td></tr>
+{% else %}<tr><td colspan="5" class="muted">Nothing yet.</td></tr>{% endfor %}
+</table></div></div>
+{% endblock %}

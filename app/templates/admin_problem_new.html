@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card"><h2>New problem</h2>
+{% if error %}<div class="err">{{ error }}</div>{% endif %}
+<form method="post" action="/admin/problems">{% if contest_id %}<input type="hidden" name="contest" value="{{ contest_id }}">{% endif %}
+<p class="muted">Avval masala shartini kiriting. Keyingi sahifada reference solution kodini va o‘zingiz belgilagan miqdordagi manual input/output testlarni qo‘shasiz.</p>
+{% with p = none %}{% include "_problem_fields.html" %}{% endwith %}
+<button class="btn">Create</button></form></div>
+{% endblock %}

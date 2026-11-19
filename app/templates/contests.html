@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Contests - {{ site_name }}{% endblock %}
+{% block content %}
+<h2>Contests</h2>
+{% macro table(items) %}
+<div class="scroll"><table class="tbl">
+<tr><th>Title</th><th>Type</th><th>Starts</th><th>Length</th><th>Status</th><th>Registered</th><th></th></tr>
+{% for c, st, part in items %}
+<tr><td><a href="/contests/{{ c.id }}">{{ c.title }}</a></td><td>{{ c.kind }}</td>
+<td data-utc="{{ c.start_at|utc_iso }}"></td><td>{{ c|duration_min }} min</td>
+<td><span class="cs cs-{{ st }}">{{ st }}</span></td><td>{{ 'yes' if part else '' }}</td>
+<td><a href="/contests/{{ c.id }}/standings">Standings</a></td></tr>
+{% else %}<tr><td colspan="7" class="muted">Nothing here.</td></tr>{% endfor %}
+</table></div>
+{% endmacro %}
+<h3>Current and upcoming</h3>{{ table(current) }}
+<h3>Past</h3>{{ table(past) }}
+{% endblock %}

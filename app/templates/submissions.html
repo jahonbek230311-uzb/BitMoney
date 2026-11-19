@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ title }}</h2>
+<div class="scroll"><table class="tbl">
+<tr><th>#</th>{% if show_user %}<th>User</th>{% endif %}<th>Problem</th>{% if admin_actions %}<th>Contest</th>{% endif %}<th>Language</th><th>Verdict</th><th>Passed</th><th>Time</th><th>Memory</th><th>When (UTC)</th>{% if admin_actions %}<th>Action</th>{% endif %}</tr>
+{% for r in rows %}{% set s = r[0] %}{% set ign = s.id in ignored %}
+<tr {% if ign %}class="ignored"{% endif %}><td><a href="/submissions/{{ s.id }}">{{ s.id }}</a></td>{% if show_user %}<td>{{ r[2] }}</td>{% endif %}
+<td><a href="/problems/{{ s.problem_id }}">{{ r[1] }}</a></td>{% if admin_actions %}<td>{{ s.contest_id or '' }}</td>{% endif %}<td>{{ s.language }}</td>
+<td><span class="v v-{{ s.verdict }}">{{ s.verdict }}</span>{% if ign %} <small class="muted">(ignored)</small>{% endif %}</td><td>{{ s.passed }}/{{ s.total }}</td>
+<td>{{ s.time_ms }} ms</td><td>{{ s.memory_kb // 1024 }} MB</td><td>{{ s.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+{% if admin_actions %}<td>
+{% if ign %}<form method="post" action="/admin/submissions/{{ s.id }}/unignore" class="inline"><input type="hidden" name="next" value="/admin/submissions"><button class="link">Count again</button></form>
+{% else %}<form method="post" action="/admin/submissions/{{ s.id }}/ignore" class="inline" onsubmit="return confirm('Ignore this submission? It will stop counting in standings and statistics.')"><input type="hidden" name="next" value="/admin/submissions"><button class="link">Ignore</button></form>{% endif %}</td>{% endif %}</tr>
+{% else %}<tr><td colspan="11" class="muted">No submissions yet.</td></tr>{% endfor %}
+</table></div>
+{% endblock %}

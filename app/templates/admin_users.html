@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Users</h2>
+{% if error %}<div class="err">{{ error }}</div>{% endif %}
+{% if created %}
+<div class="card" id="created-box">
+  <h3>New accounts - copy or download now</h3>
+  <p class="err">Passwords are shown only once and cannot be recovered later (you can reset them).</p>
+  <div class="scroll"><table class="tbl" id="created"><tr><th>Username</th><th>Password</th></tr>
+  {% for u, pw in created %}<tr><td>{{ u }}</td><td class="code">{{ pw }}</td></tr>{% endfor %}</table></div>
+  <button class="btn" id="dl-created" type="button">Download CSV</button>
+  <button class="btn alt" onclick="window.print()" type="button">Print</button>
+</div>
+{% endif %}
+<div class="row">
+<div class="card"><h3>Create one account</h3>
+<form method="post" action="/admin/users/create">
+  <label>Username<input name="username" required pattern="[A-Za-z0-9_]{3,32}" title="3-32 letters, digits or _"></label>
+  <label>Password (empty = generate)<input name="password" type="text" autocomplete="off"></label>
+  <label>Role<select name="role"><option value="student">student</option><option value="admin">admin (password min 12)</option></select></label>
+  <button class="btn">Create</button></form></div>
+<div class="card"><h3>Create many accounts</h3>
+<form method="post" action="/admin/users/bulk">
+  <label>Prefix<input name="prefix" required maxlength="24" value="team" pattern="[A-Za-z0-9_]{1,24}"></label>
+  <div class="row"><label>First number<input name="start" type="number" min="0" value="1"></label><label>How many (max 200)<input name="count" type="number" min="1" max="200" value="10"></label></div>
+  <p class="muted">Creates team001, team002, ... with random passwords.</p>
+  <button class="btn">Create accounts</button></form></div>
+</div>
+<div class="scroll"><table class="tbl">
+<tr><th>#</th><th>Username</th><th>Role</th><th>Status</th><th>Submissions</th><th>Actions</th></tr>
+{% for u in users %}
+<tr><td>{{ u.id }}</td><td>{{ u.username }}</td><td>{{ u.role.name }}</td>
+<td>{{ 'Active' if u.is_active else 'Suspended' }}</td><td>{{ counts.get(u.id, 0) }}</td>
+<td class="acts">
+<form method="post" action="/admin/users/{{ u.id }}/toggle" class="inline"><button class="link">{{ 'Suspend' if u.is_active else 'Reactivate' }}</button></form>
+<form method="post" action="/admin/users/{{ u.id }}/role" class="inline"><select name="role"><option value="student" {{ 'selected' if u.role.name=='student' }}>student</option><option value="admin" {{ 'selected' if u.role.name=='admin' }}>admin</option></select><button class="link">Set role</button></form>
+<form method="post" action="/admin/users/{{ u.id }}/password" class="inline"><input name="password" type="text" autocomplete="off" minlength="8" placeholder="new password" required><button class="link">Reset password</button></form>
+</td></tr>
+{% endfor %}
+</table></div>
+{% endblock %}

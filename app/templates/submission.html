@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Submission #{{ s.id }}</h2>
+<p>Problem: <a href="/problems/{{ p.id }}">{{ p.title }}</a> &middot; User: {{ owner.username }} &middot; Language: {{ s.language }}
+&middot; Verdict: <span class="v v-{{ s.verdict }}">{{ s.verdict }}</span> &middot; {{ s.passed }}/{{ s.total }} tests &middot; {{ s.time_ms }} ms &middot; {{ s.memory_kb // 1024 }} MB</p>
+{% if s.compile_log %}<h3>{{ 'Compiler output' if s.verdict == 'CE' else 'Message' }}</h3><pre class="log">{{ s.compile_log }}</pre>{% endif %}
+{% if results %}
+<h3>Tests</h3>
+<div class="scroll"><table class="tbl small"><tr><th>Test</th><th>Verdict</th><th>Time</th><th>Memory</th></tr>
+{% for r, ordn in results %}<tr><td>{{ loop.index }}</td><td><span class="v v-{{ r.verdict }}">{{ r.verdict }}</span></td><td>{{ r.time_ms }} ms</td><td>{{ r.memory_kb // 1024 }} MB</td></tr>{% endfor %}
+</table></div>
+<p class="muted">Test inputs and expected outputs are hidden.</p>
+{% endif %}
+<h3>Source code</h3><pre class="log">{{ s.source }}</pre>
+{% endblock %}

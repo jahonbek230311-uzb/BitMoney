@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Appearance & themes — Bit Money{% endblock %}
+{% block content %}
+<section class="theme-page-head"><span class="hero-pill"><i></i> PERSONALIZE YOUR WORKSPACE</span><h1>Make it <span>yours.</span></h1><p>Choose a theme. Your preference is saved on this device and applied across Bit Money.</p></section>
+<div class="theme-options" role="group" aria-label="Choose appearance theme">
+  <button class="theme-option" type="button" data-set-theme="dark"><span class="theme-preview preview-dark"><i></i><i></i><i></i><b>ϟ</b></span><span class="theme-option-title">Dark <em>DEFAULT</em></span><small>Deep navy, neon green, and cyan.</small><span class="theme-select-mark">✓</span></button>
+  <button class="theme-option" type="button" data-set-theme="light"><span class="theme-preview preview-light"><i></i><i></i><i></i><b>ϟ</b></span><span class="theme-option-title">Light</span><small>Bright surfaces and crisp contrast.</small><span class="theme-select-mark">✓</span></button>
+  <button class="theme-option" type="button" data-set-theme="system"><span class="theme-preview preview-system"><i></i><i></i><i></i><b>◐</b></span><span class="theme-option-title">System</span><small>Follow your device appearance.</small><span class="theme-select-mark">✓</span></button>
+</div>
+<div class="theme-note"><span>✦</span><p><b>Instant preview</b><br>Tap any theme card to see the change animate across the page. Your choice stays saved for your next visit.</p></div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Admin dashboard — Bit Money{% endblock %}
+{% block content %}
+<section class="admin-welcome"><div><span class="hero-pill"><i></i> BIT MONEY CONTROL CENTER</span><h1>Admin <span>Dashboard</span></h1><p>Manage your coding arena, review activity, and keep contests running smoothly.</p></div><div class="admin-welcome-mark"><img src="/static/bit-money.svg" alt="Bit Money logo"><span>BIT MONEY</span><small>ADMIN WORKSPACE</small></div></section>
+<div class="admin-stat-grid">{% for k, v in stats.items() %}<article class="admin-stat"><span class="stat-symbol">{% if k == 'Users' %}♙{% elif k == 'Problems' %}⌘{% elif k == 'Published' %}✓{% elif k == 'Submissions' %}⇧{% else %}◷{% endif %}</span><div><b>{{ v }}</b><span>{{ k }}</span></div><small>{% if k == 'Pending' and v %}Needs attention{% elif k == 'Published' %}Available to students{% elif k == 'Users' %}Registered accounts{% elif k == 'Problems' %}Problem library{% elif k == 'Submissions' %}All attempts{% else %}Queue status{% endif %}</small></article>{% endfor %}</div>
+<section class="admin-section"><div class="admin-section-head"><div><span class="eyebrow">WORKSPACE</span><h2>Management tools</h2><p>Choose an area to manage. Each tool opens its dedicated workspace.</p></div></div>
+<div class="admin-tools-grid">
+<a class="admin-tool" href="/admin/problems"><span class="tool-icon">⌘</span><span class="tool-text"><b>Problems</b><small>Create, edit, validate tests, and publish tasks.</small></span><span class="tool-arrow">↗</span></a>
+<a class="admin-tool" href="/admin/contests"><span class="tool-icon">♜</span><span class="tool-text"><b>Contests</b><small>Schedule rounds and manage participants.</small></span><span class="tool-arrow">↗</span></a>
+<a class="admin-tool" href="/admin/users"><span class="tool-icon">♙</span><span class="tool-text"><b>Users</b><small>Create accounts and manage permissions.</small></span><span class="tool-arrow">↗</span></a>
+<a class="admin-tool" href="/admin/profile-requests"><span class="tool-icon">✉</span><span class="tool-text"><b>Profile requests</b><small>Review pending profile changes {% if waiting %}<em>{{ waiting }} pending</em>{% endif %}.</small></span><span class="tool-arrow">↗</span></a>
+<a class="admin-tool" href="/admin/submissions"><span class="tool-icon">⇧</span><span class="tool-text"><b>Submissions</b><small>Inspect verdicts and review submission history.</small></span><span class="tool-arrow">↗</span></a>
+<a class="admin-tool" href="/theme"><span class="tool-icon">◐</span><span class="tool-text"><b>Appearance</b><small>Personalize your interface theme.</small></span><span class="tool-arrow">↗</span></a>
+</div></section>
+<section class="admin-quick"><div><h3>Quick action</h3><p>Create a problem with manually entered tests, then validate the test suite before publishing.</p></div><a class="btn hero-primary" href="/admin/problems/new">＋ Add problem</a></section>
+{% endblock %}
